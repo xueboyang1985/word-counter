@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Online Word Counter — Count Words Characters Sentences in Browser</title>
+<meta name="description" content="Count words, characters, sentences, and paragraphs online for free. 100% browser-based, nothing uploaded. Real-time word count, reading time, keyword density.">
+<meta property="og:title" content="Free Online Word Counter — No Upload, 100% Private">
+<meta property="og:description" content="Count words, characters, sentences, paragraphs in your browser. Real-time stats, no upload, no tracking.">
+<link rel="canonical" href="https://xueboyang1985.github.io/word-counter/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Free Online Word Counter","operatingSystem":"Any","browserRequirements":"Modern browser","applicationCategory":"Multimedia","description":"Count words, characters, sentences in your browser. 100% local, no upload."}
+</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#1a1a1a;line-height:1.6;}
+.container{max-width:800px;margin:0 auto;padding:20px;}
+.header{text-align:center;padding:40px 0 20px;}
+.header h1{font-size:28px;margin-bottom:8px;color:#1a1a1a;}
+.header p{color:#64748b;font-size:15px;}
+.card{background:white;border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px;}
+.stat-box{text-align:center;padding:16px 8px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;}
+.stat-box .num{font-size:28px;font-weight:700;color:#6366f1;}
+.stat-box .label{font-size:12px;color:#64748b;margin-top:4px;}
+textarea{width:100%;min-height:300px;padding:16px;border:2px solid #e2e8f0;border-radius:8px;font-size:15px;line-height:1.7;resize:vertical;font-family:inherit;transition:border-color 0.2s;}
+textarea:focus{outline:none;border-color:#6366f1;}
+textarea.limit-hit{border-color:#ef4444;}
+.keywords{margin-top:16px;}
+.keywords h3{font-size:14px;color:#475569;margin-bottom:8px;}
+.keyword-item{display:inline-block;padding:4px 10px;margin:3px;background:#f0f0ff;border-radius:12px;font-size:12px;color:#4338ca;}
+.keyword-item .count{color:#94a3b8;margin-left:4px;}
+.keyword-item .bar{display:inline-block;height:4px;border-radius:2px;background:#6366f1;vertical-align:middle;margin-right:4px;}
+.footer{text-align:center;padding:40px 0;color:#94a3b8;font-size:13px;}
+.free-hint{text-align:center;padding:10px;background:#fef3c7;border-radius:8px;font-size:13px;color:#92400e;margin:12px 0;}
+.free-hint a{color:#6366f1;font-weight:600;text-decoration:none;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>Free Online Word Counter</h1>
+<p>Count words, characters, sentences &amp; paragraphs — 100% in your browser, nothing uploaded</p>
+</div>
+
+<div class="card">
+<div class="stats-grid" id="stats">
+<div class="stat-box"><div class="num" id="word-count">0</div><div class="label">Words</div></div>
+<div class="stat-box"><div class="num" id="char-count">0</div><div class="label">Characters</div></div>
+<div class="stat-box"><div class="num" id="char-no-space">0</div><div class="label">No Spaces</div></div>
+<div class="stat-box"><div class="num" id="sent-count">0</div><div class="label">Sentences</div></div>
+<div class="stat-box"><div class="num" id="para-count">0</div><div class="label">Paragraphs</div></div>
+<div class="stat-box"><div class="num" id="read-time">0</div><div class="label">Min Read</div></div>
+</div>
+
+<textarea id="text-input" placeholder="Type or paste your text here..." oninput="countWords()"></textarea>
+
+<div class="keywords" id="keywords-section" style="display:none;">
+<h3>Top Keywords</h3>
+<div id="keyword-list"></div>
+</div>
+
+<div class="free-hint" id="free-hint">Free: 10,000 character limit &middot; <a onclick="showProModal()">Get PRO</a> for unlimited text, export reports &amp; more</div>
+</div>
+
+<div class="card" style="font-size:14px;color:#475569;">
+<p><strong>How it works:</strong> Every keystroke is analyzed in real time — word count, character count, sentences, paragraphs, reading time, and keyword density. Everything stays on your device. Nothing is uploaded or stored.</p>
+</div>
+
+<div class="card" style="font-size:13px;">
+<p><strong>🛠️ More free tools:</strong></p>
+<p>
+<a href="https://xueboyang1985.github.io/image-compressor/">Image Compressor</a> &middot;
+<a href="https://xueboyang1985.github.io/image-resizer/">Image Resizer</a> &middot;
+<a href="https://xueboyang1985.github.io/qr-code-generator/">QR Code Generator</a> &middot;
+<a href="https://xueboyang1985.github.io/password-generator/">Password Generator</a> &middot;
+<a href="https://xueboyang1985.github.io/pdf-tools/">PDF Tools</a> &middot;
+<a href="https://xueboyang1985.github.io/free-browser-tools/">All Tools</a>
+</p>
+</div>
+
+<div class="footer">
+<p>100% local &bull; No upload &bull; No server &bull; Your text never leaves your device</p>
+</div>
+</div>
+
+<div class="modal-overlay" id="pro-modal" style="display:none;" onclick="if(event.target===this)closeProModal()">
+<div class="modal">
+<h2>🚀 Word Counter PRO</h2>
+<p style="margin:12px 0;font-size:14px;color:#475569;">Unlock unlimited word counting:</p>
+<ul style="font-size:14px;color:#475569;margin-bottom:16px;padding-left:20px;">
+<li>No character limits</li>
+<li>Export reports (PDF, CSV)</li>
+<li>Advanced analytics</li>
+<li>Ad-free experience</li>
+<li>Works across all 13+ browser tools</li>
+</ul>
+<p style="font-weight:600;font-size:18px;margin-bottom:16px;">PRO Bundle — $19.99 <span style="font-size:13px;color:#94a3b8;font-weight:400;">one-time, 3 devices</span></p>
+<button class="btn btn-primary" onclick="buyBundle()" style="width:100%;">Get PRO Bundle $19.99</button>
+<p style="margin-top:12px;font-size:12px;color:#94a3b8;">Already purchased? <a onclick="showLicenseModal()" style="color:#6366f1;cursor:pointer;text-decoration:underline;">Enter license key</a></p>
+<p style="margin-top:8px;font-size:12px;color:#94a3b8;">Bundle includes this tool + 13+ other tools</p>
+</div>
+</div>
+
+<div class="modal-overlay" id="license-modal" style="display:none;" onclick="if(event.target===this)closeLicenseModal()">
+<div class="modal">
+<h2>Enter PRO License Key</h2>
+<input type="text" id="pro-key" placeholder="Paste your license key here" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-size:14px;margin:12px 0;">
+<button class="btn btn-primary" onclick="actPRO()" style="width:100%;">Activate PRO</button>
+<p id="pro-status" style="margin-top:8px;font-size:13px;color:#64748b;"></p>
+</div>
+</div>
+
+<style>
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;}
+.modal{background:white;border-radius:12px;padding:24px;width:90%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,0.2);}
+.modal h2{font-size:18px;}
+.btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.15s;}
+.btn-primary{background:#6366f1;color:white;}
+.btn-primary:hover{background:#4f46e5;}
+</style>
+
+<script>
+let pro = 0;
+try { pro = parseInt(localStorage.getItem('wc_pro')) || 0; } catch(e) {}
+const FREE_LIMIT_CHARS = 10000;
+const BUNDLE_ID = 'xdlh1FHKAU0E7q3ZRuHPaw==';
+let textarea = document.getElementById('text-input');
+
+function countWords() {
+  const text = textarea.value;
+  const limited = !pro && text.length > FREE_LIMIT_CHARS;
+
+  if (limited) {
+    textarea.classList.add('limit-hit');
+    const trimmed = text.slice(0, FREE_LIMIT_CHARS);
+    textarea.value = trimmed;
+  } else {
+    textarea.classList.remove('limit-hit');
+  }
+
+  const t = limited ? text.slice(0, FREE_LIMIT_CHARS) : text;
+
+  const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+  const chars = t.length;
+  const noSpace = t.replace(/\s/g, '').length;
+  const sents = t.trim() ? (t.match(/[.!?]+/g) || []).length : 0;
+  const paras = t.trim() ? t.split(/\n\s*\n/).filter(p => p.trim()).length : 0;
+  const readTime = Math.max(1, Math.round(words / 200));
+  const speakTime = Math.max(1, Math.round(words / 150));
+
+  document.getElementById('word-count').textContent = words.toLocaleString();
+  document.getElementById('char-count').textContent = chars.toLocaleString();
+  document.getElementById('char-no-space').textContent = noSpace.toLocaleString();
+  document.getElementById('sent-count').textContent = sents;
+  document.getElementById('para-count').textContent = paras;
+  document.getElementById('read-time').textContent = readTime + 'm';
+
+  // Keywords
+  if (words > 10) {
+    const wordMap = {};
+    t.toLowerCase().replace(/[^a-z0-9\s'-]/g, '').split(/\s+/).forEach(w => {
+      if (w.length > 2) wordMap[w] = (wordMap[w] || 0) + 1;
+    });
+    const sorted = Object.entries(wordMap).sort((a, b) => b[1] - a[1]).slice(0, 20);
+    const maxCount = sorted[0]?.[1] || 1;
+    document.getElementById('keywords-section').style.display = 'block';
+    document.getElementById('keyword-list').innerHTML = sorted.map(([word, count]) => {
+      const pct = (count / maxCount * 100).toFixed(0);
+      return '<span class="keyword-item"><span class="bar" style="width:' + pct + 'px"></span>' + word + '<span class="count">(' + count + ')</span></span>';
+    }).join('');
+  } else {
+    document.getElementById('keywords-section').style.display = 'none';
+  }
+}
+
+// PRO
+function showProModal() { document.getElementById('pro-modal').style.display = 'flex'; }
+function closeProModal() { document.getElementById('pro-modal').style.display = 'none'; }
+function showLicenseModal() { closeProModal(); document.getElementById('license-modal').style.display = 'flex'; }
+function closeLicenseModal() { document.getElementById('license-modal').style.display = 'none'; }
+function buyBundle() {
+  window.open('https://xuebo8.gumroad.com/l/skxcpj', 'gumroad', 'width=600,height=700');
+}
+
+async function tryBundleKey(k) {
+  try {
+    const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({product_id: BUNDLE_ID, license_key: k})
+    });
+    const d = await r.json();
+    return d.success && d.purchase;
+  } catch { return false; }
+}
+
+async function actPRO() {
+  const k = document.getElementById('pro-key').value.trim();
+  if (!k || k.length < 10) { document.getElementById('pro-status').textContent = 'Enter your license key.'; return; }
+  document.getElementById('pro-status').textContent = 'Verifying...';
+  if (await tryBundleKey(k)) {
+    pro = 1;
+    try { localStorage.setItem('wc_pro', '1'); } catch(e) {}
+    closeLicenseModal();
+    document.getElementById('free-hint').innerHTML = 'PRO activated &mdash; unlimited text, export reports.';
+    location.reload();
+  } else {
+    document.getElementById('pro-status').textContent = 'Invalid license key. Check your Gumroad receipt.';
+  }
+}
+
+window.addEventListener('message', e => {
+  if (e.data && e.data.success && e.data.purchase) {
+    const input = document.getElementById('pro-key');
+    if (input) { input.value = e.data.license_key || ''; showLicenseModal(); }
+  }
+});
+
+if (pro) {
+  document.getElementById('free-hint').innerHTML = 'PRO activated &mdash; unlimited text, export reports.';
+}
+</script>
+</body>
+</html>
